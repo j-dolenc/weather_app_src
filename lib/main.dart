@@ -8,8 +8,8 @@ import 'package:window_size/window_size.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  seedColor: const Color.fromARGB(255, 6, 167, 247),
-  background: const Color.fromARGB(255, 49, 60, 66),
+  seedColor: Color.fromARGB(255, 111, 189, 167),
+  background: Color.fromARGB(255, 157, 203, 190),
 );
 
 final theme = ThemeData().copyWith(
@@ -32,7 +32,7 @@ final theme = ThemeData().copyWith(
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    setWindowTitle('Flutter Demo');
+    setWindowTitle('Weather');
     setWindowMinSize(const Size(750, 450));
     setWindowMaxSize(Size.infinite);
   }

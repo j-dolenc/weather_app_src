@@ -9,6 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:weather_app_flutter/models/weather.dart';
 import 'package:weather_app_flutter/widgets/city.dart';
 import 'package:weather_app_flutter/widgets/daily_weather.dart';
+import 'package:weather_app_flutter/widgets/more_info.dart';
+import 'package:weather_app_flutter/widgets/temp_cond.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,14 +24,11 @@ class _MainScreenState extends State<MainScreen> {
   String lat = "46.05";
   String long = "14.51";
   late Future<Weather> _weather;
-  List<List<String>> _cities = List.generate(
-      3, (i) => List.filled(10, "", growable: false),
-      growable: false);
 
   @override
   void initState() {
     super.initState();
-    _weather = _getInfo("46.05", "14.51", "Ljubljana");
+    _weather = _getInfo(lat, long, "Ljubljana");
   }
 
   Future<List<String>> _getCityLatLong(String city) async {
@@ -148,7 +147,11 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: EasySearchBar(
-        title: const Text('Weather'),
+        backgroundColor: const Color.fromARGB(255, 111, 189, 167),
+        searchCursorColor: Colors.white70,
+        foregroundColor: Colors.white70,
+        searchBackIconTheme: const IconThemeData(color: Colors.white70),
+        title: const Text(''),
         onSearch: (value) => {
           setState(() {
             searchValue = value;
@@ -179,6 +182,7 @@ class _MainScreenState extends State<MainScreen> {
             return Center(child: Text(snapshot.error.toString()));
           }
           return Column(
+            mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -194,98 +198,26 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 400,
-                      child: svg,
+                    SizedBox(
+                      width: 300,
+                      child: SvgPicture.asset(
+                        weatherIcons[snapshot.data!.condition]!,
+                        height: 250,
+                        width: 250,
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${snapshot.data!.currTemp}°C",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          weatherMap[snapshot.data!.condition]!,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ],
+                    TempCondition(
+                      condition: snapshot.data!.condition,
+                      currTemp: snapshot.data!.currTemp,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${snapshot.data!.maxTemp}°C",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Max",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              "${snapshot.data!.minTemp}°C",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Min",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${snapshot.data!.windSpd}m/s",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Wind",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              "${snapshot.data!.rain}%",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Rain",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              snapshot.data!.sunrise
-                                  .substring(snapshot.data!.sunrise.length - 5),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Sunrise",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              snapshot.data!.sunset
-                                  .substring(snapshot.data!.sunset.length - 5),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            const Text(
-                              "Sunset",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        )
-                      ],
-                    )
+                    MoreInfo(
+                      maxTemp: snapshot.data!.maxTemp,
+                      minTemp: snapshot.data!.minTemp,
+                      rain: snapshot.data!.rain,
+                      sunrise: snapshot.data!.sunrise,
+                      sunset: snapshot.data!.sunset,
+                      windSpd: snapshot.data!.windSpd,
+                    ),
                   ],
                 ),
               ),

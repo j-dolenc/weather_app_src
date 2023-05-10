@@ -17,7 +17,10 @@ class DailyWeather extends StatelessWidget {
     return Column(
       children: [
         SvgPicture.asset(weatherIcons[condition]!),
-        Text(date),
+        Text(
+          date,
+          style: const TextStyle(color: Colors.white),
+        ),
       ],
     );
   }
