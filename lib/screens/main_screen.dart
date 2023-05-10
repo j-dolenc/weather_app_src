@@ -1,9 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:weather_app_flutter/models/weather.dart';
-import 'package:weather_app_flutter/widgets/daily_weather.dart';
+import 'package:easy_search_bar/easy_search_bar.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+import 'package:weather_app_flutter/models/weather.dart';
+import 'package:weather_app_flutter/widgets/city.dart';
+import 'package:weather_app_flutter/widgets/daily_weather.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -13,19 +17,25 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  String searchValue = '';
+  String lat = "46.05";
+  String long = "14.51";
   late Future<Weather> _weather;
+  List<List<String>> _cities = List.generate(
+      3, (i) => List.filled(10, "", growable: false),
+      growable: false);
 
   @override
   void initState() {
     super.initState();
-    _getCities("Lj");
     _weather = _getInfo("46.05", "14.51", "Ljubljana");
   }
 
-  Future<Map<String, List<String>>> _getCities(String city) async {
+  Future<List<String>> _getCityLatLong(String city) async {
+    //print(_cities);
     final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
       "name": city,
-      "count": "10",
+      "count": "1",
       "language": "en",
       "format": "json",
     });
@@ -36,14 +46,55 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     if (res.body == 'null') {
-      return {};
+      return [] as List<String>;
+    }
+
+    final Map<String, dynamic> listData = json.decode(res.body);
+    final results = listData["results"] as List;
+
+    var latLong = [
+      results[0]["latitude"].toString(),
+      results[0]["longitude"].toString()
+    ];
+
+    print(latLong);
+
+    return latLong;
+  }
+
+  Future<List<String>> _getCityNames(String city) async {
+    //print(_cities);
+    final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
+      "name": city,
+      "count": "10",
+      "language": "en",
+      "format": "json",
+    });
+    //throw Exception('An error occured!');
+    var res = await http.get(url);
+    if (res.statusCode >= 400) {
+      print(res.statusCode);
+      throw Exception();
+    }
+
+    if (res.body == 'null') {
+      return [] as List<String>;
     }
     final Map<String, dynamic> listData = json.decode(res.body);
+    if (listData["results"] == null) {
+      return [];
+    }
+    final results = listData["results"] as List;
 
+    List<String> cities = List.filled(results.length, "");
+
+    for (var i = 0; i < results.length; i++) {
+      cities[i] = results[i]["name"];
+    }
+    print(cities);
     //print(url);
-    //print(listData);
 
-    return {};
+    return cities;
     // setState(() {
     //   _groceryItems = loadedItems;
     //   _isLoading= false;
@@ -52,6 +103,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<Weather> _getInfo(String lat, String long, String city) async {
+    final Map<String, int> weekly = {};
     final url = Uri.https("api.open-meteo.com", "/v1/forecast", {
       "latitude": lat,
       "longitude": long,
@@ -66,12 +118,18 @@ class _MainScreenState extends State<MainScreen> {
     final res = await http.get(url);
 
     if (res.statusCode >= 400 || res.body == 'null') {
+      print(res.statusCode);
       throw Exception();
     }
 
     final Map<String, dynamic> listData = json.decode(res.body);
+
     final daily = listData["daily"];
     final current = listData["current_weather"];
+
+    for (var i = 0; i < 7; i++) {
+      weekly[daily["time"][i]] = daily["weathercode"][i];
+    }
 
     return Weather(
       city,
@@ -79,7 +137,7 @@ class _MainScreenState extends State<MainScreen> {
       current["temperature"].toString(),
       daily["temperature_2m_max"][0].toString(),
       daily["temperature_2m_min"][0].toString(),
-      [],
+      weekly,
       daily["precipitation_sum"][0].toString(),
       daily["sunrise"][0],
       daily["sunset"][0],
@@ -90,8 +148,29 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Weather"),
+      appBar: EasySearchBar(
+        title: const Text('Weather'),
+        onSearch: (value) => {
+          setState(() {
+            searchValue = value;
+          })
+        },
+        openOverlayOnSearch: false,
+        onSuggestionTap: (data) async {
+          var latLong = await _getCityLatLong(data);
+
+          setState(() {
+            _weather = _getInfo(latLong[0], latLong[1], data);
+          });
+        },
+        asyncSuggestions: (value) async {
+          if (value.length <= 3) {
+            return [];
+          }
+          //var city = await _getCityNames(value);
+          //print(city);
+          return await _getCityNames(value);
+        },
       ),
       body: FutureBuilder(
         future: _weather,
@@ -109,14 +188,7 @@ class _MainScreenState extends State<MainScreen> {
               const SizedBox(
                 height: 14,
               ),
-              Text(
-                snapshot.data!.city,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground,
-                      fontSize: 40,
-                    ),
-                textAlign: TextAlign.left,
-              ),
+              City(city: snapshot.data!.city),
               const SizedBox(
                 height: 14,
               ),
@@ -125,7 +197,7 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset("assets/images/cloudy.png"),
+                    Image.network(weatherIcons[snapshot.data!.condition]!),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,15 +293,16 @@ class _MainScreenState extends State<MainScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    DailyWeather(),
-                    DailyWeather(),
-                    DailyWeather(),
-                    DailyWeather(),
-                    DailyWeather(),
-                    DailyWeather(),
-                    DailyWeather(),
-                  ],
+                  children: snapshot.data!.nextWeek.entries.map((e) {
+                    DateTime currentDate = DateTime.now();
+                    if (currentDate.day.toString() ==
+                        e.key.substring(e.key.length - 2)) {
+                      return DailyWeather(condition: e.value, date: "Today");
+                    }
+                    var day = DateFormat('EEEE').format(DateTime.parse(e.key));
+
+                    return DailyWeather(condition: e.value, date: day);
+                  }).toList(),
                 ),
               )
             ],

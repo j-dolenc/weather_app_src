@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_app_flutter/screens/main_screen.dart';
+import 'package:window_size/window_size.dart';
 
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -27,6 +30,12 @@ final theme = ThemeData().copyWith(
 );
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle('Flutter Demo');
+    setWindowMinSize(const Size(500, 350));
+    setWindowMaxSize(Size.infinite);
+  }
   runApp(
     const MyApp(),
   );
