@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -32,7 +33,6 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<List<String>> _getCityLatLong(String city) async {
-    //print(_cities);
     final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
       "name": city,
       "count": "1",
@@ -57,13 +57,10 @@ class _MainScreenState extends State<MainScreen> {
       results[0]["longitude"].toString()
     ];
 
-    print(latLong);
-
     return latLong;
   }
 
   Future<List<String>> _getCityNames(String city) async {
-    //print(_cities);
     final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
       "name": city,
       "count": "10",
@@ -73,7 +70,6 @@ class _MainScreenState extends State<MainScreen> {
     //throw Exception('An error occured!');
     var res = await http.get(url);
     if (res.statusCode >= 400) {
-      print(res.statusCode);
       throw Exception();
     }
 
@@ -91,8 +87,6 @@ class _MainScreenState extends State<MainScreen> {
     for (var i = 0; i < results.length; i++) {
       cities[i] = results[i]["name"];
     }
-    print(cities);
-    //print(url);
 
     return cities;
     // setState(() {
@@ -118,7 +112,6 @@ class _MainScreenState extends State<MainScreen> {
     final res = await http.get(url);
 
     if (res.statusCode >= 400 || res.body == 'null') {
-      print(res.statusCode);
       throw Exception();
     }
 
@@ -147,6 +140,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Widget svg = SvgPicture.asset(
+      "assets/images/clear_sky.svg",
+      height: 250,
+      width: 250,
+    );
+
     return Scaffold(
       appBar: EasySearchBar(
         title: const Text('Weather'),
@@ -167,8 +166,6 @@ class _MainScreenState extends State<MainScreen> {
           if (value.length <= 3) {
             return [];
           }
-          //var city = await _getCityNames(value);
-          //print(city);
           return await _getCityNames(value);
         },
       ),
@@ -197,7 +194,10 @@ class _MainScreenState extends State<MainScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.network(weatherIcons[snapshot.data!.condition]!),
+                    Container(
+                      width: 400,
+                      child: svg,
+                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,10 +289,13 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
               ),
+              const SizedBox(
+                height: 28,
+              ),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: snapshot.data!.nextWeek.entries.map((e) {
                     DateTime currentDate = DateTime.now();
                     if (currentDate.day.toString() ==

@@ -16,7 +16,7 @@ class City extends StatelessWidget {
         city,
         style: Theme.of(context).textTheme.titleLarge!.copyWith(
               color: Theme.of(context).colorScheme.onBackground,
-              fontSize: 75,
+              fontSize: 60,
             ),
         textAlign: TextAlign.left,
       ),

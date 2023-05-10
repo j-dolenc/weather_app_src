@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:weather_app_flutter/models/weather.dart';
 
 class DailyWeather extends StatelessWidget {
@@ -15,7 +16,7 @@ class DailyWeather extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Image.network(weatherIcons[condition]!),
+        SvgPicture.asset(weatherIcons[condition]!),
         Text(date),
       ],
     );

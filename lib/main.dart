@@ -33,7 +33,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('Flutter Demo');
-    setWindowMinSize(const Size(500, 350));
+    setWindowMinSize(const Size(750, 450));
     setWindowMaxSize(Size.infinite);
   }
   runApp(
