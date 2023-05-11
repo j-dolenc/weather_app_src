@@ -38,6 +38,9 @@ class MoreInfo extends StatelessWidget {
                     color: Colors.white70,
                   ),
             ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 14),
+            ),
             Text(
               "$minTemp°C",
               style: const TextStyle(color: Colors.white70),
@@ -67,6 +70,9 @@ class MoreInfo extends StatelessWidget {
                     color: Colors.white70,
                   ),
             ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 14),
+            ),
             Text(
               "$rain%",
               style: const TextStyle(color: Colors.white70),
@@ -95,6 +101,9 @@ class MoreInfo extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Colors.white70,
                   ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 14),
             ),
             Text(
               sunset.substring(sunset.length - 5),

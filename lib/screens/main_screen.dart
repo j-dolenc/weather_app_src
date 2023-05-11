@@ -205,7 +205,7 @@ class _MainScreenState extends State<MainScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 300,
+                      width: 250,
                       child: SvgPicture.asset(
                         weatherIcons[snapshot.data!.condition]!,
                         height: 250,
