@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:easy_search_bar/easy_search_bar.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -31,6 +30,7 @@ class _MainScreenState extends State<MainScreen> {
     _weather = _getInfo(lat, long, "Ljubljana");
   }
 
+  //get city longitude and latitude
   Future<List<String>> _getCityLatLong(String city) async {
     final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
       "name": city,
@@ -59,6 +59,7 @@ class _MainScreenState extends State<MainScreen> {
     return latLong;
   }
 
+  //get city names for search bar
   Future<List<String>> _getCityNames(String city) async {
     final url = Uri.https('geocoding-api.open-meteo.com', "/v1/search", {
       "name": city,
@@ -66,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
       "language": "en",
       "format": "json",
     });
-    //throw Exception('An error occured!');
+
     var res = await http.get(url);
     if (res.statusCode >= 400) {
       throw Exception();
@@ -95,6 +96,7 @@ class _MainScreenState extends State<MainScreen> {
     //return loadedItems;
   }
 
+  //get current weather information about the current city
   Future<Weather> _getInfo(String lat, String long, String city) async {
     final Map<String, int> weekly = {};
     final url = Uri.https("api.open-meteo.com", "/v1/forecast", {
@@ -122,7 +124,7 @@ class _MainScreenState extends State<MainScreen> {
     for (var i = 0; i < 7; i++) {
       weekly[daily["time"][i]] = daily["weathercode"][i];
     }
-
+    //Weather is a new class so it is easier to store and acces info about weather
     return Weather(
       city,
       current["weathercode"],
@@ -139,12 +141,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Widget svg = SvgPicture.asset(
-      "assets/images/clear_sky.svg",
-      height: 250,
-      width: 250,
-    );
-
     return Scaffold(
       appBar: EasySearchBar(
         searchTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
