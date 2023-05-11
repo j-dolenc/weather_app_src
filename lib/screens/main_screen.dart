@@ -156,6 +156,7 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: const Color.fromARGB(255, 142, 195, 176),
         searchCursorColor: Colors.white70,
         foregroundColor: Colors.white70,
+        searchClearIconTheme: const IconThemeData(color: Colors.white70),
         searchBackIconTheme: const IconThemeData(color: Colors.white70),
         title: const Text(''),
         onSearch: (value) => {
