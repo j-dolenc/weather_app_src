@@ -147,7 +147,13 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: EasySearchBar(
-        backgroundColor: const Color.fromARGB(255, 111, 189, 167),
+        searchTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: Colors.white70,
+            ),
+        suggestionTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
+              color: Colors.white70,
+            ),
+        backgroundColor: const Color.fromARGB(255, 142, 195, 176),
         searchCursorColor: Colors.white70,
         foregroundColor: Colors.white70,
         searchBackIconTheme: const IconThemeData(color: Colors.white70),

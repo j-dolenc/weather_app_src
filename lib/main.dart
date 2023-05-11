@@ -9,7 +9,7 @@ import 'package:window_size/window_size.dart';
 final colorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
   seedColor: Color.fromARGB(255, 111, 189, 167),
-  background: Color.fromARGB(255, 157, 203, 190),
+  background: Color.fromARGB(255, 158, 213, 197),
 );
 
 final theme = ThemeData().copyWith(

@@ -25,24 +25,28 @@ class MoreInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "$maxTemp°C",
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Max",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
             Text(
               "$minTemp°C",
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Min",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
           ],
         ),
@@ -50,24 +54,28 @@ class MoreInfo extends StatelessWidget {
           width: 28,
         ),
         Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "$windSpd m/s",
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Wind",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
             Text(
-              "${(double.parse(rain) * 10).floor().toString()}%",
+              "$rain%",
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Rain",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
           ],
         ),
@@ -75,24 +83,28 @@ class MoreInfo extends StatelessWidget {
           width: 28,
         ),
         Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               sunrise.substring(sunrise.length - 5),
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Sunrise",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
             Text(
               sunset.substring(sunset.length - 5),
               style: const TextStyle(color: Colors.white70),
             ),
-            const Text(
+            Text(
               "Sunset",
-              style: TextStyle(color: Colors.white70),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Colors.white70,
+                  ),
             ),
           ],
         )
